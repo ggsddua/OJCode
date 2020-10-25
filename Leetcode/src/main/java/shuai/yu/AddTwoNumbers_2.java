@@ -62,4 +62,14 @@ class ListNode
     {
         val = x;
     }
+
+    ListNode()
+    {
+    }
+
+    ListNode(int val, ListNode next)
+    {
+        this.val = val;
+        this.next = next;
+    }
 }
