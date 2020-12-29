@@ -45,26 +45,15 @@ public class PatchingArray_330
     public static int minPatches(int[] nums, int n)
     {
         int ans = 0;
-        int index = 0;
-        int preIndex = index;
+        int index = -1;
         int sumTemp = 0;
-        // 使用list存储，方便插入
-        List<Integer> list = new LinkedList<>();
-        for (int num : nums)
-        {
-            list.add(num);
-        }
 
         // 状态初始化
-        if (nums.length == 0 || (nums[0] != 1 && n >= 1))
+        for (int j = 0; j < nums.length; j++)
         {
-            list.add(0, 1);
-            ans++;
-        }
-        for (int j = 0; j < list.size(); j++)
-        {
-            if (list.get(j) > 1)
+            if (nums[j] > 1)
                 break;
+            sumTemp++;
             index = j;
         }
         // 从1开始，遍历，但不是一一遍历，中途根据实际情况，跳过一些数字
@@ -72,11 +61,10 @@ public class PatchingArray_330
         {
             // 求小于等于i的所有数的和，如果和大于i，表示可以以和表示，否则，需要将i加入到数组中
             // 求和时，需要缓存之前的和，不能每次都重新求，某些情况下会导致计算时间过长
-            sumTemp += list.subList(preIndex, index + 1).stream().mapToInt(Integer::intValue).sum();
             if (sumTemp < i)
             {
                 // 和小于i（即表示和等于i-1），将i加入到数组中。和变为2*i-1，即2*i-1以下的数都是可以表示的，直接将i设置为2*i
-                list.add(index + 1, i);
+                sumTemp += i;
                 ans++;
                 i = i * 2;
             }
@@ -87,11 +75,11 @@ public class PatchingArray_330
             }
 
             // 找到小于等于i的数的最大索引下标
-            preIndex = index + 1;
-            for (int j = index; j < list.size(); j++)
+            for (int j = index + 1; j < nums.length; j++)
             {
-                if (list.get(j) > i)
+                if (nums[j] > i)
                     break;
+                sumTemp += nums[j];
                 index = j;
             }
         }
