@@ -1,4 +1,4 @@
-package shuai.yu.stock;
+package shuai.yu.dynamicProgram.stock;
 
 /**
  * 带手续费的

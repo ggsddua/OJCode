@@ -1,6 +1,4 @@
-package shuai.yu.stock;
-
-import java.util.Arrays;
+package shuai.yu.dynamicProgram.stock;
 
 /**
  * 条件同上

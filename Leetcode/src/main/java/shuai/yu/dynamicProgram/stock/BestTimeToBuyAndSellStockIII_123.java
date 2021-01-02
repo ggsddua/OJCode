@@ -1,4 +1,4 @@
-package shuai.yu.stock;
+package shuai.yu.dynamicProgram.stock;
 
 import java.util.Arrays;
 
