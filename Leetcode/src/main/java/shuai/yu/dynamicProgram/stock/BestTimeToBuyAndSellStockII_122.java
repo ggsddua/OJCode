@@ -1,4 +1,4 @@
-package shuai.yu.stock;
+package shuai.yu.dynamicProgram.stock;
 
 /**
  * 买卖股票的最佳时机 II
