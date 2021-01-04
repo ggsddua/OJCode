@@ -1,7 +1,4 @@
-package shuai.yu;
-
-import java.util.LinkedList;
-import java.util.List;
+package shuai.yu.greedy;
 
 /**
  * 按要求补齐数组
@@ -48,17 +45,18 @@ public class PatchingArray_330
         int index = -1;
         int sumTemp = 0;
 
-        // 状态初始化
-        for (int j = 0; j < nums.length; j++)
-        {
-            if (nums[j] > 1)
-                break;
-            sumTemp++;
-            index = j;
-        }
         // 从1开始，遍历，但不是一一遍历，中途根据实际情况，跳过一些数字
         for (int i = 1; i <= n && i > 0; )
         {
+            // 找到小于等于i的数的最大索引下标
+            for (int j = index + 1; j < nums.length; j++)
+            {
+                if (nums[j] > i)
+                    break;
+                sumTemp += nums[j];
+                index = j;
+            }
+
             // 求小于等于i的所有数的和，如果和大于i，表示可以以和表示，否则，需要将i加入到数组中
             // 求和时，需要缓存之前的和，不能每次都重新求，某些情况下会导致计算时间过长
             if (sumTemp < i)
@@ -72,15 +70,6 @@ public class PatchingArray_330
             {
                 // 和大于i，可以以和表示，i增加
                 i = i + sumTemp - i + 1;
-            }
-
-            // 找到小于等于i的数的最大索引下标
-            for (int j = index + 1; j < nums.length; j++)
-            {
-                if (nums[j] > i)
-                    break;
-                sumTemp += nums[j];
-                index = j;
             }
         }
         return ans;
