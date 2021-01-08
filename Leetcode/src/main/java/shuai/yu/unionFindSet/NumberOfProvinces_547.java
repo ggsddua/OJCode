@@ -1,5 +1,7 @@
 package shuai.yu.unionFindSet;
 
+import shuai.yu.common.UnionFindSet;
+
 /**
  * 省份数量，并查集
  * 有 n个城市，其中一些彼此相连，另一些没有相连。如果城市 a与城市 b直接相连，且城市 b与城市 c直接相连，那么城市 a与城市 c间接相连。
@@ -21,12 +23,29 @@ public class NumberOfProvinces_547
          * 输入：isConnected = [[1,0,0],[0,1,0],[0,0,1]]
          * 输出：3
          */
+        int[][] isConnected = new int[][]{{1, 1, 0}, {1, 1, 0}, {0, 0, 1}};
+        System.out.println(findCircleNum(isConnected));
+        isConnected = new int[][]{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+        System.out.println(findCircleNum(isConnected));
     }
 
     public static int findCircleNum(int[][] isConnected)
     {
-        int ans = 0;
-        // TODO: 2021/1/7  
-        return ans;
+        // TODO: 2021/1/8 还没提交 
+        if (isConnected == null || isConnected.length == 0 || isConnected[0].length == 0)
+            return 0;
+        UnionFindSet unionFindSet = new UnionFindSet();
+        for (int i = 0; i < isConnected.length; i++)
+        {
+            unionFindSet.add(i);
+            for (int j = i + 1; j < isConnected[0].length; j++)
+            {
+                if (isConnected[i][j] == 1)
+                {
+                    unionFindSet.merge(i, j);
+                }
+            }
+        }
+        return unionFindSet.getNumOfTrees();
     }
 }
