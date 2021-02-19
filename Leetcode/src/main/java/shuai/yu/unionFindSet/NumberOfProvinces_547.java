@@ -31,7 +31,6 @@ public class NumberOfProvinces_547
 
     public static int findCircleNum(int[][] isConnected)
     {
-        // TODO: 2021/1/8 还没提交 
         if (isConnected == null || isConnected.length == 0 || isConnected[0].length == 0)
             return 0;
         UnionFindSet unionFindSet = new UnionFindSet();

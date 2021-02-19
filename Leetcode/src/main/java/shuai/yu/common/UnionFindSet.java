@@ -56,6 +56,14 @@ public class UnionFindSet
         int yRoot = findRoot(y);
         if (xRoot != yRoot)
         {
+            if (!setMap.containsKey(xRoot))
+            {
+                add(xRoot);
+            }
+            if (!setMap.containsKey(yRoot))
+            {
+                add(yRoot);
+            }
             setMap.put(xRoot, yRoot);
             numOfTrees--;
         }
