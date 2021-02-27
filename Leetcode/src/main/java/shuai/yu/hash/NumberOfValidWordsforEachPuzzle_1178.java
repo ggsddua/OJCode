@@ -1,5 +1,7 @@
 package shuai.yu.hash;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,29 +43,37 @@ public class NumberOfValidWordsforEachPuzzle_1178
         findNumOfValidWords(words, puzzles);
     }
 
+    /**
+     * 使用hashMap，超时
+     */
     public static List<Integer> findNumOfValidWords(String[] words, String[] puzzles)
     {
-        // TODO: 2021/2/26 超时 
-        List<Integer> list = new LinkedList<>();
-        Map<Integer, Map<Character, Character>> puzzlesMap = new HashMap<>();
-        for (int i = 0; i < puzzles.length; i++)
+        int pLen = puzzles.length;
+        List<Integer> list = new ArrayList<>(pLen);
+        for (int i = 0; i < pLen; i++)
+        {
+            list.add(0);
+        }
+        List<Map<Character, Character>> puzzlesList = new ArrayList<>(pLen);
+        for (int i = 0; i < pLen; i++)
         {
             Map<Character, Character> map = new HashMap<>();
-            puzzlesMap.put(i, map);
+            puzzlesList.add(map);
             for (char c : puzzles[i].toCharArray())
             {
                 map.put(c, puzzles[i].toCharArray()[0]);
             }
         }
 
-        for (Map<Character, Character> map : puzzlesMap.values())
+        for (String word : words)
         {
-            int ans = 0;
-            for (String word : words)
+            char[] temp = word.toCharArray();
+            for (int i = 0; i < pLen; i++)
             {
+                Map<Character, Character> map = puzzlesList.get(i);
                 boolean flag = true;
                 boolean containFirst = false;
-                for (char c : word.toCharArray())
+                for (char c : temp)
                 {
                     if (!map.containsKey(c))
                     {
@@ -74,10 +84,124 @@ public class NumberOfValidWordsforEachPuzzle_1178
                         containFirst = true;
                 }
                 if (flag && containFirst)
-                    ans++;
+                    list.set(i, list.get(i) + 1);
             }
-            list.add(ans);
         }
         return list;
+    }
+
+    /**
+     * 位运算
+     *
+     * @param words
+     * @param puzzles
+     * @return
+     */
+    public static List<Integer> findNumOfValidWords1(String[] words, String[] puzzles)
+    {
+        Map<Integer, Integer> frequency = new HashMap<Integer, Integer>();
+
+        // a~z共26位，将word用26bit数表示
+        for (String word : words)
+        {
+            int mask = 0;
+            for (int i = 0; i < word.length(); ++i)
+            {
+                char ch = word.charAt(i);
+                mask |= (1 << (ch - 'a'));
+            }
+            // 如果2进制数中1的个数大于7，不为任何字谜的谜底
+            if (Integer.bitCount(mask) <= 7)
+            {
+                frequency.put(mask, frequency.getOrDefault(mask, 0) + 1);
+            }
+        }
+
+        List<Integer> ans = new ArrayList<Integer>();
+        for (String puzzle : puzzles)
+        {
+            int total = 0;
+            int mask = 0;
+            for (int i = 1; i < 7; ++i)
+            {
+                mask |= (1 << (puzzle.charAt(i) - 'a'));
+            }
+            int subset = mask;
+            // 遍历，puzzle第一位字母一定在，后面的，依次减一，然后&mask（保证所有字母在谜面中），直至后六位为0
+            do
+            {
+                int s = subset | (1 << (puzzle.charAt(0) - 'a'));
+                if (frequency.containsKey(s))
+                {
+                    total += frequency.get(s);
+                }
+                subset = (subset - 1) & mask;
+            } while (subset != mask);
+
+            ans.add(total);
+        }
+        return ans;
+    }
+
+    /**
+     * 位运算优化
+     *
+     * @param words
+     * @param puzzles
+     * @return
+     */
+    public static List<Integer> findNumOfValidWords2(String[] words, String[] puzzles)
+    {
+        Map<Integer, Integer> frequency = new HashMap<Integer, Integer>();
+
+        // a~z共26位，将word用26bit数表示
+        for (String word : words)
+        {
+            int mask = 0;
+            for (int i = 0; i < word.length(); ++i)
+            {
+                char ch = word.charAt(i);
+                mask |= (1 << (ch - 'a'));
+            }
+            // 如果2进制数中1的个数大于7，不为任何字谜的谜底
+            if (Integer.bitCount(mask) <= 7)
+            {
+                frequency.put(mask, frequency.getOrDefault(mask, 0) + 1);
+            }
+        }
+
+        List<Integer> ans = new ArrayList<Integer>();
+        for (String puzzle : puzzles)
+        {
+            int total = 0;
+            int mask = 0;
+            int[] bit = new int[6];
+            for (int i = 1; i < 7; ++i)
+            {
+                bit[i - 1] = (1 << (puzzle.charAt(i) - 'a'));
+            }
+            mask = (1 << (puzzle.charAt(0) - 'a'));
+
+            // 遍历，puzzle第一位字母一定在，后六位，可有可无，列出所有的可能
+            int[] bitFlag = new int[6];
+            for (int i = 0b111111; i >= 0; i--)
+            {
+                int s = mask;
+                for (int temp = i, j = 0; temp > 0; temp >>= 1, j++)
+                {
+                    if (temp % 2 == 1)
+                    {
+                        s |= bit[j];
+                    }
+                }
+                if (frequency.containsKey(s))
+                {
+                    total += frequency.get(s);
+                }
+
+            }
+            ans.add(total);
+        }
+        return ans;
     }
 }
